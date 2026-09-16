@@ -191,7 +191,7 @@ function App() {
           .sort(([firstMonth], [secondMonth]) => secondMonth.localeCompare(firstMonth))
           .map(([month, days]) => ({
             month,
-            monthName: new Intl.DateTimeFormat('kk-KZ', { month: 'long' }).format(new Date(`${year}-${month}-01`)),
+            monthName: new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(`${year}-${month}-01`)),
             days,
           })),
       }))
