@@ -138,6 +138,12 @@
 .month-income { color: #17805c; }
 .month-chevron { color: #17805c !important; font-size: 18px !important; line-height: 1; }
 
+.month-detail-panel { min-height: 300px; }
+.back-to-archive { border: none; background: transparent; color: #17805c; padding: 0; margin-bottom: 18px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.month-detail-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.month-detail-heading h2 { margin: 0; color: #16352c; font-size: 25px; text-transform: capitalize; }
+.month-detail-grid { padding-bottom: 4px; }
+
 .day-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));

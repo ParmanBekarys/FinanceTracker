@@ -69,7 +69,7 @@ function App() {
   const [newCategory, setNewCategory] = useState('')
   const [editingCategory, setEditingCategory] = useState(null)
   const [categoryDraft, setCategoryDraft] = useState('')
-  const [expandedMonths, setExpandedMonths] = useState({})
+  const [selectedMonthKey, setSelectedMonthKey] = useState(null)
   const [selectedDayKey, setSelectedDayKey] = useState(null)
   const [editMode, setEditMode] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -327,11 +327,10 @@ function App() {
     setActivePage(sectionId)
   }
 
-  const toggleMonth = (monthKey) => {
-    setExpandedMonths((current) => ({
-      ...current,
-      [monthKey]: !current[monthKey],
-    }))
+  const openMonth = (monthKey) => {
+    setSelectedMonthKey(monthKey)
+    setSelectedDayKey(null)
+    setActivePage('month')
   }
 
   const toggleDay = (dayKey, hasRecords) => {
@@ -347,7 +346,7 @@ function App() {
       <header className="topbar">
         <div>
           <p className="eyebrow">Finance Tracker</p>
-          <h1>{activePage === 'analytics' ? 'Analytics' : activePage === 'settings' ? 'Settings' : activePage === 'archive' ? 'Monthly archive' : 'My balance'}</h1>
+          <h1>{activePage === 'analytics' ? 'Analytics' : activePage === 'settings' ? 'Settings' : activePage === 'archive' ? 'Monthly archive' : activePage === 'month' ? 'Month details' : 'My balance'}</h1>
         </div>
         <div className="menu-wrap">
           <button
@@ -617,11 +616,10 @@ function App() {
                     .filter((item) => item.type === 'income')
                     .reduce((sum, item) => sum + Number(item.amount), 0)
                   const monthKey = `${yearGroup.year}-${monthGroup.month}`
-                  const isMonthExpanded = Boolean(expandedMonths[monthKey])
 
                   return (
-                    <article key={monthKey} className={isMonthExpanded ? 'month-card expanded' : 'month-card'}>
-                      <button type="button" className="month-card-header" onClick={() => toggleMonth(monthKey)} aria-expanded={isMonthExpanded}>
+                    <article key={monthKey} className="month-card">
+                      <button type="button" className="month-card-header" onClick={() => openMonth(monthKey)}>
                         <div>
                           <h4>{monthGroup.monthName}</h4>
                           <span>{monthTransactions.length} records</span>
@@ -629,11 +627,11 @@ function App() {
                         <div className="month-card-summary">
                           <strong className="month-expense">-{formatMoney(monthExpense)} ₸</strong>
                           <strong className="month-income">+{formatMoney(monthIncome)} ₸</strong>
-                          <span className="month-chevron">{isMonthExpanded ? '⌃' : '⌄'}</span>
+                          <span className="month-chevron">›</span>
                         </div>
                       </button>
 
-                      <div className={isMonthExpanded ? 'day-grid' : 'day-grid collapsed'}>
+                      <div className="day-grid collapsed">
                         {Array.from({ length: 31 }, (_, index) => {
                           const day = String(index + 1).padStart(2, '0')
                           const dayTransactions = monthGroup.days[day] || []
@@ -692,6 +690,80 @@ function App() {
           )) : (
             <p className="empty-analytics">No saved records yet.</p>
           )}
+        </section>
+
+        <section className={activePage === 'month' ? 'archive-panel month-detail-panel' : 'archive-panel hidden-panel'}>
+          <button type="button" className="back-to-archive" onClick={() => setActivePage('archive')}>
+            ‹ Monthly archive
+          </button>
+
+          {monthlyArchive.flatMap((yearGroup) => yearGroup.months.map((monthGroup) => ({
+            ...monthGroup,
+            year: yearGroup.year,
+            key: `${yearGroup.year}-${monthGroup.month}`,
+          }))).filter((monthGroup) => monthGroup.key === selectedMonthKey).map((monthGroup) => {
+            const monthTransactions = Object.values(monthGroup.days).flat()
+            const monthExpense = monthTransactions.filter((item) => item.type === 'expense').reduce((sum, item) => sum + Number(item.amount), 0)
+            const monthIncome = monthTransactions.filter((item) => item.type === 'income').reduce((sum, item) => sum + Number(item.amount), 0)
+
+            return (
+              <div key={monthGroup.key}>
+                <div className="month-detail-heading">
+                  <div>
+                    <p className="eyebrow">{monthGroup.year}</p>
+                    <h2>{monthGroup.monthName}</h2>
+                  </div>
+                  <div className="month-card-summary">
+                    <strong className="month-expense">-{formatMoney(monthExpense)} ₸</strong>
+                    <strong className="month-income">+{formatMoney(monthIncome)} ₸</strong>
+                  </div>
+                </div>
+
+                <div className="day-grid month-detail-grid">
+                  {Array.from({ length: 31 }, (_, index) => {
+                    const day = String(index + 1).padStart(2, '0')
+                    const dayTransactions = monthGroup.days[day] || []
+                    const dayExpense = dayTransactions.filter((item) => item.type === 'expense').reduce((sum, item) => sum + Number(item.amount), 0)
+                    const dayIncome = dayTransactions.filter((item) => item.type === 'income').reduce((sum, item) => sum + Number(item.amount), 0)
+                    const dayKey = `${monthGroup.key}-${day}`
+
+                    return (
+                      <button key={day} type="button" className={dayTransactions.length ? 'day-cell has-records' : 'day-cell'} onClick={() => toggleDay(dayKey, dayTransactions.length > 0)}>
+                        <span className="day-number">{index + 1}</span>
+                        {dayTransactions.length > 0 && (
+                          <div className="day-details">
+                            {dayExpense > 0 && <small className="day-expense">-{formatMoney(dayExpense)} ₸</small>}
+                            {dayIncome > 0 && <small className="day-income">+{formatMoney(dayIncome)} ₸</small>}
+                            <span>{dayTransactions.length} item{dayTransactions.length > 1 ? 's' : ''}</span>
+                          </div>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {selectedDayKey?.startsWith(`${monthGroup.key}-`) && (
+                  <div className="day-history">
+                    <div className="day-history-heading">
+                      <strong>{monthGroup.monthName} {Number(selectedDayKey.split('-').pop())}</strong>
+                      <span>History</span>
+                    </div>
+                    {(monthGroup.days[selectedDayKey.split('-').pop()] || []).map((item) => (
+                      <div key={item.id} className="day-history-row">
+                        <div>
+                          <strong>{item.category}</strong>
+                          <small>{item.note}</small>
+                        </div>
+                        <strong className={item.type === 'income' ? 'income-text' : 'expense-text'}>
+                          {item.type === 'income' ? '+' : '-'}{formatMoney(item.amount)} ₸
+                        </strong>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </section>
       </main>
 
