@@ -98,9 +98,9 @@
 
 .archive-panel {
   background: #ffffff;
-  border: 1px solid #d9eee2;
-  border-radius: 22px;
-  padding: 18px;
+  border: none;
+  border-radius: 0;
+  padding: 0;
 }
 
 .archive-heading h2 { margin: 0; font-size: 21px; }
