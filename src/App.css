@@ -96,6 +96,59 @@
 .content { max-width: 480px; margin: 0 auto; }
 .hidden-panel { display: none !important; }
 
+.archive-panel {
+  background: #ffffff;
+  border: 1px solid #d9eee2;
+  border-radius: 22px;
+  padding: 18px;
+}
+
+.archive-heading h2 { margin: 0; font-size: 21px; }
+.archive-heading p:last-child { margin: 6px 0 18px; color: #6b8b7c; font-size: 12px; }
+.archive-year-group + .archive-year-group { margin-top: 22px; }
+.archive-year-group > h3 { margin: 0 0 10px; color: #13734f; font-size: 20px; }
+.archive-month-list { display: flex; flex-direction: column; gap: 12px; }
+
+.month-card {
+  border: 1px solid #d9eee2;
+  border-radius: 16px;
+  background: #fbfefc;
+  padding: 13px;
+}
+
+.month-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.month-card-header h4 { margin: 0; color: #16352c; font-size: 18px; text-transform: capitalize; }
+.month-card-header span { color: #6b8b7c; font-size: 11px; }
+.month-card-header strong { color: #f06c70; font-size: 14px; }
+
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.day-cell {
+  min-height: 52px;
+  padding: 5px;
+  border: 1px solid #edf7f1;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.day-cell.has-records { border-color: #a8dabc; background: #eaf8ef; }
+.day-number { color: #6b8b7c; font-size: 11px; }
+.day-details { display: flex; flex-direction: column; gap: 2px; margin-top: 3px; font-size: 8px; line-height: 1.1; }
+.day-details span { color: #6b8b7c; }
+.day-expense { color: #d95b62; }
+.day-income { color: #17805c; }
+
 .quick-add-page .topbar,
 .quick-add-page .content,
 .quick-add-page .fab {

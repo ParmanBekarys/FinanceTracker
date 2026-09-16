@@ -172,6 +172,31 @@ function App() {
     return segments.length ? `conic-gradient(${segments.join(', ')})` : '#edf7f1'
   }, [spendingBreakdown])
 
+  const monthlyArchive = useMemo(() => {
+    const years = {}
+
+    transactions.forEach((item) => {
+      const [year, month, day] = item.date.split('-')
+      years[year] ??= {}
+      years[year][month] ??= {}
+      years[year][month][day] ??= []
+      years[year][month][day].push(item)
+    })
+
+    return Object.entries(years)
+      .sort(([firstYear], [secondYear]) => secondYear.localeCompare(firstYear))
+      .map(([year, months]) => ({
+        year,
+        months: Object.entries(months)
+          .sort(([firstMonth], [secondMonth]) => secondMonth.localeCompare(firstMonth))
+          .map(([month, days]) => ({
+            month,
+            monthName: new Intl.DateTimeFormat('kk-KZ', { month: 'long' }).format(new Date(`${year}-${month}-01`)),
+            days,
+          })),
+      }))
+  }, [transactions])
+
   const formatMoney = (value) =>
     new Intl.NumberFormat('en-US', {
       maximumFractionDigits: 0,
@@ -305,7 +330,7 @@ function App() {
       <header className="topbar">
         <div>
           <p className="eyebrow">Finance Tracker</p>
-          <h1>{activePage === 'analytics' ? 'Analytics' : activePage === 'settings' ? 'Settings' : 'My balance'}</h1>
+          <h1>{activePage === 'analytics' ? 'Analytics' : activePage === 'settings' ? 'Settings' : activePage === 'archive' ? 'Monthly archive' : 'My balance'}</h1>
         </div>
         <div className="menu-wrap">
           <button
@@ -331,6 +356,10 @@ function App() {
               <button type="button" onClick={() => navigateTo('settings')}>
                 <span className="app-menu-icon" aria-hidden="true">⚙︎</span>
                 <span>Settings</span>
+              </button>
+              <button type="button" onClick={() => navigateTo('archive')}>
+                <span className="app-menu-icon" aria-hidden="true">▦</span>
+                <span>Monthly archive</span>
               </button>
             </div>
           )}
@@ -549,6 +578,68 @@ function App() {
               </div>
             ))}
           </div>
+        </section>
+
+        <section className={activePage === 'archive' ? 'archive-panel' : 'archive-panel hidden-panel'}>
+          <div className="archive-heading">
+            <p className="eyebrow">History</p>
+            <h2>Monthly expenses</h2>
+            <p>Every year, month, and day is collected in one place.</p>
+          </div>
+
+          {monthlyArchive.length > 0 ? monthlyArchive.map((yearGroup) => (
+            <div key={yearGroup.year} className="archive-year-group">
+              <h3>{yearGroup.year}</h3>
+              <div className="archive-month-list">
+                {yearGroup.months.map((monthGroup) => {
+                  const monthTransactions = Object.values(monthGroup.days).flat()
+                  const monthExpense = monthTransactions
+                    .filter((item) => item.type === 'expense')
+                    .reduce((sum, item) => sum + Number(item.amount), 0)
+
+                  return (
+                    <article key={`${yearGroup.year}-${monthGroup.month}`} className="month-card">
+                      <div className="month-card-header">
+                        <div>
+                          <h4>{monthGroup.monthName}</h4>
+                          <span>{monthTransactions.length} records</span>
+                        </div>
+                        <strong>{formatMoney(monthExpense)} ₸</strong>
+                      </div>
+
+                      <div className="day-grid">
+                        {Array.from({ length: 31 }, (_, index) => {
+                          const day = String(index + 1).padStart(2, '0')
+                          const dayTransactions = monthGroup.days[day] || []
+                          const dayExpense = dayTransactions
+                            .filter((item) => item.type === 'expense')
+                            .reduce((sum, item) => sum + Number(item.amount), 0)
+                          const dayIncome = dayTransactions
+                            .filter((item) => item.type === 'income')
+                            .reduce((sum, item) => sum + Number(item.amount), 0)
+
+                          return (
+                            <div key={day} className={dayTransactions.length ? 'day-cell has-records' : 'day-cell'}>
+                              <span className="day-number">{index + 1}</span>
+                              {dayTransactions.length > 0 && (
+                                <div className="day-details">
+                                  {dayExpense > 0 && <small className="day-expense">-{formatMoney(dayExpense)} ₸</small>}
+                                  {dayIncome > 0 && <small className="day-income">+{formatMoney(dayIncome)} ₸</small>}
+                                  <span>{dayTransactions.length} item{dayTransactions.length > 1 ? 's' : ''}</span>
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            </div>
+          )) : (
+            <p className="empty-analytics">No saved records yet.</p>
+          )}
         </section>
       </main>
 
