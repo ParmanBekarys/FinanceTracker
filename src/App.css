@@ -122,17 +122,29 @@
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 12px;
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
 }
 
 .month-card-header h4 { margin: 0; color: #16352c; font-size: 18px; text-transform: capitalize; }
 .month-card-header span { color: #6b8b7c; font-size: 11px; }
-.month-card-header strong { color: #f06c70; font-size: 14px; }
+.month-card-summary { display: flex; align-items: center; gap: 8px; }
+.month-card-summary strong { font-size: 12px; white-space: nowrap; }
+.month-expense { color: #d95b62; }
+.month-income { color: #17805c; }
+.month-chevron { color: #17805c !important; font-size: 18px !important; line-height: 1; }
 
 .day-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 5px;
 }
+
+.day-grid.collapsed { display: none; }
 
 .day-cell {
   min-height: 52px;

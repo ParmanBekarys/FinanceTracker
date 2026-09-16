@@ -69,6 +69,7 @@ function App() {
   const [newCategory, setNewCategory] = useState('')
   const [editingCategory, setEditingCategory] = useState(null)
   const [categoryDraft, setCategoryDraft] = useState('')
+  const [expandedMonths, setExpandedMonths] = useState({})
   const [editMode, setEditMode] = useState(false)
   const [editingId, setEditingId] = useState(null)
 
@@ -323,6 +324,13 @@ function App() {
   const navigateTo = (sectionId) => {
     setIsMenuOpen(false)
     setActivePage(sectionId)
+  }
+
+  const toggleMonth = (monthKey) => {
+    setExpandedMonths((current) => ({
+      ...current,
+      [monthKey]: !current[monthKey],
+    }))
   }
 
   return (
@@ -596,18 +604,27 @@ function App() {
                   const monthExpense = monthTransactions
                     .filter((item) => item.type === 'expense')
                     .reduce((sum, item) => sum + Number(item.amount), 0)
+                  const monthIncome = monthTransactions
+                    .filter((item) => item.type === 'income')
+                    .reduce((sum, item) => sum + Number(item.amount), 0)
+                  const monthKey = `${yearGroup.year}-${monthGroup.month}`
+                  const isMonthExpanded = Boolean(expandedMonths[monthKey])
 
                   return (
-                    <article key={`${yearGroup.year}-${monthGroup.month}`} className="month-card">
-                      <div className="month-card-header">
+                    <article key={monthKey} className={isMonthExpanded ? 'month-card expanded' : 'month-card'}>
+                      <button type="button" className="month-card-header" onClick={() => toggleMonth(monthKey)} aria-expanded={isMonthExpanded}>
                         <div>
                           <h4>{monthGroup.monthName}</h4>
                           <span>{monthTransactions.length} records</span>
                         </div>
-                        <strong>{formatMoney(monthExpense)} ₸</strong>
-                      </div>
+                        <div className="month-card-summary">
+                          <strong className="month-expense">-{formatMoney(monthExpense)} ₸</strong>
+                          <strong className="month-income">+{formatMoney(monthIncome)} ₸</strong>
+                          <span className="month-chevron">{isMonthExpanded ? '⌃' : '⌄'}</span>
+                        </div>
+                      </button>
 
-                      <div className="day-grid">
+                      <div className={isMonthExpanded ? 'day-grid' : 'day-grid collapsed'}>
                         {Array.from({ length: 31 }, (_, index) => {
                           const day = String(index + 1).padStart(2, '0')
                           const dayTransactions = monthGroup.days[day] || []
