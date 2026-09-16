@@ -29,6 +29,7 @@ const defaultTransactions = [
 const getToday = () => new Date().toISOString().slice(0, 10)
 
 const chartColors = ['#17805c', '#36b878', '#8bd8ad', '#bfead0', '#f2b880', '#ef8d8d', '#8bb7e8']
+const isQuickAddUrl = () => window.location.hash === '#add'
 
 function App() {
   const [transactions, setTransactions] = useState(() => {
@@ -61,9 +62,10 @@ function App() {
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState(getToday)
   const [note, setNote] = useState('')
-  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(isQuickAddUrl)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activePage, setActivePage] = useState('balance')
+  const [isQuickAddPage, setIsQuickAddPage] = useState(isQuickAddUrl)
   const [newCategory, setNewCategory] = useState('')
   const [editingCategory, setEditingCategory] = useState(null)
   const [categoryDraft, setCategoryDraft] = useState('')
@@ -81,6 +83,22 @@ function App() {
   useEffect(() => {
     localStorage.setItem(BALANCE_STORAGE_KEY, String(openingBalance))
   }, [openingBalance])
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const quickAdd = isQuickAddUrl()
+      setIsQuickAddPage(quickAdd)
+
+      if (quickAdd) {
+        setType('expense')
+        setEditMode(false)
+        setIsFormOpen(true)
+      }
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
 
   const filteredTransactions = useMemo(() => {
     const now = new Date()
@@ -174,6 +192,14 @@ function App() {
     setIsFormOpen(true)
   }
 
+  const closeForm = () => {
+    setIsFormOpen(false)
+
+    if (isQuickAddPage) {
+      window.location.hash = ''
+    }
+  }
+
   const openEditRecord = (record) => {
     setEditMode(true)
     setEditingId(record.id)
@@ -211,7 +237,7 @@ function App() {
     })
 
     resetForm()
-    setIsFormOpen(false)
+    closeForm()
   }
 
   const handleDelete = (id) => {
@@ -275,7 +301,7 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={isQuickAddPage ? 'app-shell quick-add-page' : 'app-shell'}>
       <header className="topbar">
         <div>
           <p className="eyebrow">Finance Tracker</p>
@@ -303,7 +329,7 @@ function App() {
                 <span>Analytics</span>
               </button>
               <button type="button" onClick={() => navigateTo('settings')}>
-                <span className="app-menu-icon" aria-hidden="true">⚙</span>
+                <span className="app-menu-icon" aria-hidden="true">⚙︎</span>
                 <span>Settings</span>
               </button>
             </div>
@@ -527,11 +553,11 @@ function App() {
       </main>
 
       {isFormOpen && (
-        <div className="modal-backdrop" onClick={() => setIsFormOpen(false)}>
+        <div className="modal-backdrop" onClick={closeForm}>
           <div className="modal-card" onClick={(event) => event.stopPropagation()}>
             <div className="modal-header">
-              <h2>{editMode ? 'Edit record' : 'New record'}</h2>
-              <button type="button" className="close-button" onClick={() => setIsFormOpen(false)}>×</button>
+              <h2>{editMode ? 'Edit record' : isQuickAddPage ? 'Quick expense' : 'New record'}</h2>
+              <button type="button" className="close-button" onClick={closeForm}>×</button>
             </div>
 
             <form className="expense-form" onSubmit={handleSubmit}>

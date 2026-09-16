@@ -85,6 +85,7 @@
   color: #17805c;
   font-size: 17px;
   font-weight: 700;
+  font-family: 'Segoe UI Symbol', 'Noto Sans Symbols', sans-serif;
 }
 
 .app-menu button:hover {
@@ -94,6 +95,24 @@
 
 .content { max-width: 480px; margin: 0 auto; }
 .hidden-panel { display: none !important; }
+
+.quick-add-page .topbar,
+.quick-add-page .content,
+.quick-add-page .fab {
+  display: none;
+}
+
+.quick-add-page .modal-backdrop {
+  align-items: center;
+}
+
+.quick-add-page .modal-card {
+  width: min(100%, 460px);
+}
+
+.quick-add-page .toggle-row {
+  display: none;
+}
 
 .filter-panel {
   background: #ffffff;
