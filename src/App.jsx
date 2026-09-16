@@ -626,11 +626,20 @@ function App() {
                           <span>{monthTransactions.length} records</span>
                         </div>
                         <div className="month-card-summary">
-                          <strong className="month-expense">-{formatMoney(monthExpense)} ₸</strong>
-                          <strong className="month-income">+{formatMoney(monthIncome)} ₸</strong>
                           <span className="month-chevron">›</span>
                         </div>
                       </button>
+
+                      <div className="month-card-metrics">
+                        <div className="month-metric">
+                          <span>Spent</span>
+                          <strong className="month-expense">-{formatMoney(monthExpense)} ₸</strong>
+                        </div>
+                        <div className="month-metric">
+                          <span>Received</span>
+                          <strong className="month-income">+{formatMoney(monthIncome)} ₸</strong>
+                        </div>
+                      </div>
 
                       <div className="day-grid collapsed">
                         {Array.from({ length: 31 }, (_, index) => {
