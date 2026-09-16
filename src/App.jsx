@@ -17,14 +17,7 @@ const defaultCategories = [
   'Other',
 ]
 
-const defaultTransactions = [
-  { id: 1, type: 'expense', category: 'Food', amount: 500, note: 'Lunch', date: '2026-09-16' },
-  { id: 2, type: 'income', category: 'Salary', amount: 250000, note: 'Monthly salary', date: '2026-09-15' },
-  { id: 3, type: 'expense', category: 'Transport', amount: 1200, note: 'Taxi', date: '2026-09-14' },
-  { id: 4, type: 'expense', category: 'Bills', amount: 34000, note: 'Internet', date: '2026-09-10' },
-  { id: 5, type: 'expense', category: 'Food', amount: 1200, note: 'Dinner', date: '2026-08-28' },
-  { id: 6, type: 'income', category: 'Freelance', amount: 45000, note: 'Project', date: '2026-08-20' },
-]
+const defaultTransactions = []
 
 const getToday = () => new Date().toISOString().slice(0, 10)
 
