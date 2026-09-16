@@ -324,6 +324,7 @@ function App() {
 
   const navigateTo = (sectionId) => {
     setIsMenuOpen(false)
+    setSelectedDayKey(null)
     setActivePage(sectionId)
   }
 
@@ -663,7 +664,7 @@ function App() {
                         })}
                       </div>
 
-                      {selectedDayKey?.startsWith(`${monthKey}-`) && (
+                      {activePage === 'month' && selectedDayKey?.startsWith(`${monthKey}-`) && (
                         <div className="day-history">
                           <div className="day-history-heading">
                             <strong>{monthGroup.monthName} {Number(selectedDayKey.split('-').pop())}</strong>
@@ -693,7 +694,7 @@ function App() {
         </section>
 
         <section className={activePage === 'month' ? 'archive-panel month-detail-panel' : 'archive-panel hidden-panel'}>
-          <button type="button" className="back-to-archive" onClick={() => setActivePage('archive')}>
+          <button type="button" className="back-to-archive" onClick={() => { setSelectedDayKey(null); setActivePage('archive') }}>
             ‹ Monthly archive
           </button>
 
