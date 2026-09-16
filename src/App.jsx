@@ -619,8 +619,19 @@ function App() {
                   const monthKey = `${yearGroup.year}-${monthGroup.month}`
 
                   return (
-                    <article key={monthKey} className="month-card">
-                      <button type="button" className="month-card-header" onClick={() => openMonth(monthKey)}>
+                    <article
+                      key={monthKey}
+                      className="month-card"
+                      role="button"
+                      tabIndex="0"
+                      onClick={() => openMonth(monthKey)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          openMonth(monthKey)
+                        }
+                      }}
+                    >
+                      <div className="month-card-header">
                         <div>
                           <h4>{monthGroup.monthName}</h4>
                           <span>{monthTransactions.length} records</span>
@@ -628,7 +639,7 @@ function App() {
                         <div className="month-card-summary">
                           <span className="month-chevron">›</span>
                         </div>
-                      </button>
+                      </div>
 
                       <div className="month-card-metrics">
                         <div className="month-metric">

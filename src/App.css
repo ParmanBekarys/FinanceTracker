@@ -118,6 +118,14 @@
   border-radius: 16px;
   background: #fbfefc;
   padding: 11px;
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.month-card:hover {
+  border-color: #8ed5ac;
+  box-shadow: 0 8px 18px rgba(23, 128, 92, 0.1);
+  transform: translateY(-1px);
 }
 
 .month-card-header {
@@ -138,9 +146,9 @@
 .month-card-header span { color: #6b8b7c; font-size: 11px; }
 .month-card-summary { display: flex; align-items: center; justify-content: center; }
 .month-card-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 12px; }
-.month-metric { min-width: 0; padding: 8px 7px; border-radius: 10px; background: #ffffff; }
+.month-metric { min-width: 0; padding: 7px 4px; border-radius: 10px; background: #ffffff; }
 .month-metric span { display: block; margin-bottom: 4px; color: #6b8b7c; font-size: 10px; }
-.month-metric strong { display: block; overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.month-metric strong { display: block; font-size: 10px; letter-spacing: -0.02em; white-space: nowrap; }
 .month-expense { color: #d95b62; }
 .month-income { color: #17805c; }
 .month-chevron { color: #17805c !important; font-size: 18px !important; line-height: 1; }
