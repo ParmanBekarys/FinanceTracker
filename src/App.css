@@ -152,14 +152,38 @@
   border: 1px solid #edf7f1;
   border-radius: 8px;
   background: #ffffff;
+  color: inherit;
+  text-align: left;
 }
 
 .day-cell.has-records { border-color: #a8dabc; background: #eaf8ef; }
+.day-cell.has-records { cursor: pointer; }
+.day-cell.has-records:hover { border-color: #17805c; }
 .day-number { color: #6b8b7c; font-size: 11px; }
 .day-details { display: flex; flex-direction: column; gap: 2px; margin-top: 3px; font-size: 8px; line-height: 1.1; }
 .day-details span { color: #6b8b7c; }
 .day-expense { color: #d95b62; }
 .day-income { color: #17805c; }
+
+.day-history {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #d9eee2;
+}
+
+.day-history-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: #13734f;
+  font-size: 13px;
+}
+
+.day-history-heading span { color: #6b8b7c; font-size: 11px; }
+.day-history-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid #edf7f1; font-size: 12px; }
+.day-history-row div { display: flex; flex-direction: column; gap: 2px; }
+.day-history-row small { color: #6b8b7c; }
 
 .quick-add-page .topbar,
 .quick-add-page .content,

@@ -70,6 +70,7 @@ function App() {
   const [editingCategory, setEditingCategory] = useState(null)
   const [categoryDraft, setCategoryDraft] = useState('')
   const [expandedMonths, setExpandedMonths] = useState({})
+  const [selectedDayKey, setSelectedDayKey] = useState(null)
   const [editMode, setEditMode] = useState(false)
   const [editingId, setEditingId] = useState(null)
 
@@ -331,6 +332,14 @@ function App() {
       ...current,
       [monthKey]: !current[monthKey],
     }))
+  }
+
+  const toggleDay = (dayKey, hasRecords) => {
+    if (!hasRecords) {
+      return
+    }
+
+    setSelectedDayKey((current) => (current === dayKey ? null : dayKey))
   }
 
   return (
@@ -636,7 +645,13 @@ function App() {
                             .reduce((sum, item) => sum + Number(item.amount), 0)
 
                           return (
-                            <div key={day} className={dayTransactions.length ? 'day-cell has-records' : 'day-cell'}>
+                            <button
+                              key={day}
+                              type="button"
+                              className={dayTransactions.length ? 'day-cell has-records' : 'day-cell'}
+                              onClick={() => toggleDay(`${monthKey}-${day}`, dayTransactions.length > 0)}
+                              aria-label={`${monthGroup.monthName} ${index + 1}`}
+                            >
                               <span className="day-number">{index + 1}</span>
                               {dayTransactions.length > 0 && (
                                 <div className="day-details">
@@ -645,10 +660,30 @@ function App() {
                                   <span>{dayTransactions.length} item{dayTransactions.length > 1 ? 's' : ''}</span>
                                 </div>
                               )}
-                            </div>
+                            </button>
                           )
                         })}
                       </div>
+
+                      {selectedDayKey?.startsWith(`${monthKey}-`) && (
+                        <div className="day-history">
+                          <div className="day-history-heading">
+                            <strong>{monthGroup.monthName} {Number(selectedDayKey.split('-').pop())}</strong>
+                            <span>History</span>
+                          </div>
+                          {(monthGroup.days[selectedDayKey.split('-').pop()] || []).map((item) => (
+                            <div key={item.id} className="day-history-row">
+                              <div>
+                                <strong>{item.category}</strong>
+                                <small>{item.note}</small>
+                              </div>
+                              <strong className={item.type === 'income' ? 'income-text' : 'expense-text'}>
+                                {item.type === 'income' ? '+' : '-'}{formatMoney(item.amount)} ₸
+                              </strong>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </article>
                   )
                 })}
