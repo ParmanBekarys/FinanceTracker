@@ -512,6 +512,16 @@ function App() {
             </div>
           </div>
 
+          <label className="analytics-account-filter">
+            Bank card
+            <select value={selectedAccountId} onChange={(event) => setSelectedAccountId(event.target.value)}>
+              <option value="all">All cards</option>
+              {accounts.map((item) => (
+                <option key={item.id} value={item.id}>{item.name}</option>
+              ))}
+            </select>
+          </label>
+
           {spendingBreakdown.length > 0 ? (
             <>
               <div className="donut-layout">
@@ -819,6 +829,7 @@ function App() {
                               <div>
                                 <strong>{item.category}</strong>
                                 <small>{item.note}</small>
+                                <small className="history-account">{accounts.find((account) => account.id === item.accountId)?.name || 'Main card'}</small>
                               </div>
                               <strong className={item.type === 'income' ? 'income-text' : 'expense-text'}>
                                 {item.type === 'income' ? '+' : '-'}{formatMoney(item.amount)} ₸
@@ -898,6 +909,7 @@ function App() {
                         <div>
                           <strong>{item.category}</strong>
                           <small>{item.note}</small>
+                          <small className="history-account">{accounts.find((account) => account.id === item.accountId)?.name || 'Main card'}</small>
                         </div>
                         <strong className={item.type === 'income' ? 'income-text' : 'expense-text'}>
                           {item.type === 'income' ? '+' : '-'}{formatMoney(item.amount)} ₸

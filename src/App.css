@@ -205,6 +205,7 @@
 .day-history-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-top: 1px solid #edf7f1; font-size: 12px; }
 .day-history-row div { display: flex; flex-direction: column; gap: 2px; }
 .day-history-row small { color: #6b8b7c; }
+.day-history-row .history-account { color: #17805c; font-size: 10px; font-weight: 700; }
 
 .quick-add-page .topbar,
 .quick-add-page .content,
@@ -354,6 +355,26 @@
 .analytics-period-buttons .filter-button {
   padding: 7px 9px;
   font-size: 11px;
+}
+
+.analytics-account-filter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: #4d7965;
+  font-size: 12px;
+}
+
+.analytics-account-filter select {
+  min-width: 135px;
+  border: 1px solid #cfe6d8;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #285846;
+  padding: 7px 9px;
+  font-size: 12px;
 }
 
 .donut-layout {
