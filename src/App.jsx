@@ -495,8 +495,8 @@ function App() {
           <div className="analytics-heading">
             <div>
               <p className="eyebrow">Analytics</p>
-              <h2>Where your money goes</h2>
-              <p>See which categories take the biggest part of your expenses.</p>
+              <h2>Spending Overview</h2>
+              <p>See where your money is going.</p>
             </div>
             <strong className="analytics-total">{formatMoney(summary.expense)} ₸</strong>
           </div>
@@ -542,6 +542,7 @@ function App() {
                         <i style={{ background: chartColors[index % chartColors.length] }}></i>
                         {item.category}
                       </span>
+                      <span className="donut-legend-amount">{formatMoney(item.total)} ₸</span>
                       <strong>{item.percent}%</strong>
                     </div>
                   ))}

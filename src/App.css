@@ -317,11 +317,12 @@
 }
 
 .analytics-panel {
-  background: #ffffff;
-  border: 1px solid #d9eee2;
-  border-radius: 22px;
+  background: linear-gradient(145deg, #ffffff 0%, #fbf8f5 100%);
+  border: 1px solid #e9e1db;
+  border-radius: 20px;
   padding: 18px;
   margin-bottom: 18px;
+  box-shadow: 0 12px 28px rgba(98, 76, 58, 0.08);
 }
 
 .analytics-heading {
@@ -333,7 +334,7 @@
 }
 
 .analytics-heading .eyebrow { margin-bottom: 4px; }
-.analytics-heading h2 { margin: 0; font-size: 21px; }
+.analytics-heading h2 { margin: 0; color: #25352f; font-size: 21px; letter-spacing: -0.03em; }
 .analytics-heading p:last-child { margin: 6px 0 0; color: #6b8b7c; font-size: 12px; }
 .analytics-total { color: #17805c; white-space: nowrap; }
 
@@ -381,20 +382,21 @@
 
 .donut-layout {
   display: grid;
-  grid-template-columns: 170px 1fr;
+  grid-template-columns: 175px 1fr;
   align-items: center;
-  gap: 18px;
-  padding: 4px 0 18px;
+  gap: 16px;
+  padding: 8px 0 18px;
 }
 
 .donut-chart {
-  width: 170px;
-  height: 170px;
+  width: 175px;
+  height: 175px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transform: rotate(-8deg);
+  transform: rotate(-10deg);
+  box-shadow: 0 8px 14px rgba(98, 76, 58, 0.12);
 }
 
 .donut-hole {
@@ -425,7 +427,8 @@
 .donut-legend-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 10px;
   color: #285846;
   font-size: 12px;
@@ -433,6 +436,7 @@
 
 .donut-legend-label { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .donut-legend-label i { width: 10px; height: 10px; flex: 0 0 auto; border-radius: 50%; }
+.donut-legend-amount { color: #4c5e56; font-size: 11px; white-space: nowrap; }
 .donut-legend-row strong { color: #16352c; }
 
 .top-expense {
