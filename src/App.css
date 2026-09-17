@@ -147,7 +147,7 @@
 .month-card-header h4 { margin: 0; color: #16352c; font-size: 16px; text-transform: capitalize; }
 .month-card-header span { color: #6b8b7c; font-size: 11px; }
 .month-card-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 12px; }
-.month-metric { min-width: 0; padding: 7px 4px; border-radius: 10px; background: #ffffff; }
+.month-metric { min-width: 0; padding: 7px 4px; border-radius: 10px; background: #ffffff; text-align: left; }
 .month-metric span { display: block; margin-bottom: 4px; color: #6b8b7c; font-size: 10px; }
 .month-metric strong { display: block; font-size: 10px; letter-spacing: -0.02em; white-space: nowrap; }
 .month-expense { color: #d95b62; }
