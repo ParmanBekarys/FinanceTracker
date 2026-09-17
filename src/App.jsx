@@ -4,6 +4,7 @@ import './App.css'
 const STORAGE_KEY = 'finance-tracker-mobile-v1'
 const CATEGORIES_STORAGE_KEY = 'finance-tracker-categories-v1'
 const BALANCE_STORAGE_KEY = 'finance-tracker-opening-balance-v1'
+const ACCOUNTS_STORAGE_KEY = 'finance-tracker-accounts-v1'
 const DATA_RESET_KEY = 'finance-tracker-data-reset-v1'
 const DATA_RESET_VERSION = '2'
 
@@ -26,6 +27,7 @@ const defaultCategories = [
 ]
 
 const defaultTransactions = []
+const defaultAccounts = [{ id: 'main-card', name: 'Main card', balance: 0 }]
 
 const getToday = () => new Date().toISOString().slice(0, 10)
 
@@ -51,14 +53,22 @@ function App() {
     }
   })
 
-  const [openingBalance, setOpeningBalance] = useState(() => {
-    const saved = localStorage.getItem(BALANCE_STORAGE_KEY)
-    return saved ? Number(saved) : 0
+  const [accounts, setAccounts] = useState(() => {
+    try {
+      const saved = localStorage.getItem(ACCOUNTS_STORAGE_KEY)
+      if (saved) return JSON.parse(saved)
+
+      const legacyBalance = Number(localStorage.getItem(BALANCE_STORAGE_KEY)) || 0
+      return [{ ...defaultAccounts[0], balance: legacyBalance }]
+    } catch {
+      return defaultAccounts
+    }
   })
 
   const [type, setType] = useState('expense')
   const [category, setCategory] = useState('Food')
   const [filterCategory, setFilterCategory] = useState('All')
+  const [selectedAccountId, setSelectedAccountId] = useState('all')
   const [period, setPeriod] = useState('all')
   const [amount, setAmount] = useState('')
   const [date, setDate] = useState(getToday)
@@ -70,6 +80,10 @@ function App() {
   const [newCategory, setNewCategory] = useState('')
   const [editingCategory, setEditingCategory] = useState(null)
   const [categoryDraft, setCategoryDraft] = useState('')
+  const [newAccount, setNewAccount] = useState('')
+  const [editingAccountId, setEditingAccountId] = useState(null)
+  const [accountDraft, setAccountDraft] = useState('')
+  const [accountId, setAccountId] = useState(() => accounts[0]?.id || 'main-card')
   const [selectedMonthKey, setSelectedMonthKey] = useState(null)
   const [selectedDayKey, setSelectedDayKey] = useState(null)
   const [editMode, setEditMode] = useState(false)
@@ -84,8 +98,18 @@ function App() {
   }, [userCategories])
 
   useEffect(() => {
-    localStorage.setItem(BALANCE_STORAGE_KEY, String(openingBalance))
-  }, [openingBalance])
+    localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify(accounts))
+  }, [accounts])
+
+  useEffect(() => {
+    const fallbackAccountId = accounts[0]?.id
+    if (!fallbackAccountId || transactions.every((item) => item.accountId)) return
+
+    setTransactions((current) => current.map((item) => ({
+      ...item,
+      accountId: item.accountId || fallbackAccountId,
+    })))
+  }, [accounts, transactions])
 
   useEffect(() => {
     const handleHashChange = () => {
@@ -125,10 +149,11 @@ function App() {
       })()
 
       const matchesCategory = filterCategory === 'All' || item.category === filterCategory
+      const matchesAccount = selectedAccountId === 'all' || item.accountId === selectedAccountId
 
-      return isInPeriod && matchesCategory
+      return isInPeriod && matchesCategory && matchesAccount
     })
-  }, [transactions, filterCategory, period])
+  }, [transactions, filterCategory, period, selectedAccountId])
 
   const summary = useMemo(() => {
     const income = filteredTransactions
@@ -139,12 +164,16 @@ function App() {
       .filter((item) => item.type === 'expense')
       .reduce((sum, item) => sum + Number(item.amount), 0)
 
+    const selectedOpeningBalance = selectedAccountId === 'all'
+      ? accounts.reduce((sum, item) => sum + Number(item.balance), 0)
+      : Number(accounts.find((item) => item.id === selectedAccountId)?.balance || 0)
+
     return {
       income,
       expense,
-      balance: openingBalance + income - expense,
+      balance: selectedOpeningBalance + income - expense,
     }
-  }, [filteredTransactions, openingBalance])
+  }, [filteredTransactions, accounts, selectedAccountId])
 
   const spendingBreakdown = useMemo(() => {
     const totals = filteredTransactions
@@ -211,6 +240,7 @@ function App() {
     setNote('')
     setType('expense')
     setCategory('Food')
+    setAccountId(accounts[0]?.id || 'main-card')
     setEditMode(false)
     setEditingId(null)
   }
@@ -233,6 +263,7 @@ function App() {
     setEditingId(record.id)
     setType(record.type)
     setCategory(record.category)
+    setAccountId(record.accountId || accounts[0]?.id || 'main-card')
     setAmount(String(record.amount))
     setDate(record.date)
     setNote(record.note)
@@ -251,6 +282,7 @@ function App() {
       id: editMode ? editingId : Date.now(),
       type,
       category,
+      accountId,
       amount: parsedAmount,
       note: note.trim() || 'No note',
       date,
@@ -321,6 +353,43 @@ function App() {
     setTransactions((current) => current.map((item) => (item.category === categoryName ? { ...item, category: 'Other' } : item)))
     setFilterCategory((current) => (current === categoryName ? 'All' : current))
     setCategory((current) => (current === categoryName ? 'Other' : current))
+  }
+
+  const handleAddAccount = (event) => {
+    event.preventDefault()
+    const accountName = newAccount.trim()
+
+    if (!accountName || accounts.some((item) => item.name.toLowerCase() === accountName.toLowerCase())) return
+
+    const nextAccount = { id: `card-${Date.now()}`, name: accountName, balance: 0 }
+    setAccounts((current) => [...current, nextAccount])
+    setNewAccount('')
+  }
+
+  const saveAccountEdit = () => {
+    const nextName = accountDraft.trim()
+    if (!editingAccountId || !nextName || accounts.some((item) => item.id !== editingAccountId && item.name.toLowerCase() === nextName.toLowerCase())) return
+
+    setAccounts((current) => current.map((item) => (item.id === editingAccountId ? { ...item, name: nextName } : item)))
+    setEditingAccountId(null)
+    setAccountDraft('')
+  }
+
+  const handleDeleteAccount = (accountToDelete) => {
+    if (accounts.length === 1) return
+    if (!window.confirm(`Delete the card "${accountToDelete.name}"? Its transactions will move to the first card.`)) return
+
+    const fallbackAccount = accounts.find((item) => item.id !== accountToDelete.id)
+    setTransactions((current) => current.map((item) => (item.accountId === accountToDelete.id ? { ...item, accountId: fallbackAccount.id } : item)))
+    setAccounts((current) => current.filter((item) => item.id !== accountToDelete.id))
+    setSelectedAccountId((current) => (current === accountToDelete.id ? 'all' : current))
+    setAccountId((current) => (current === accountToDelete.id ? fallbackAccount.id : current))
+  }
+
+  const updateAccountBalance = (accountIdToUpdate, value) => {
+    setAccounts((current) => current.map((item) => (
+      item.id === accountIdToUpdate ? { ...item, balance: Number(value) || 0 } : item
+    )))
   }
 
   const navigateTo = (sectionId) => {
@@ -403,6 +472,16 @@ function App() {
             <select value={filterCategory} onChange={(event) => setFilterCategory(event.target.value)}>
               {['All', ...userCategories].map((item) => (
                 <option key={item} value={item}>{item}</option>
+              ))}
+            </select>
+          </label>
+
+          <label className="category-filter">
+            Bank card
+            <select value={selectedAccountId} onChange={(event) => setSelectedAccountId(event.target.value)}>
+              <option value="all">All cards</option>
+              {accounts.map((item) => (
+                <option key={item.id} value={item.id}>{item.name}</option>
               ))}
             </select>
           </label>
@@ -511,6 +590,7 @@ function App() {
                 <div>
                   <h3>{item.category}</h3>
                   <p>{item.note}</p>
+                  <small className="transaction-account">{accounts.find((account) => account.id === item.accountId)?.name || 'Main card'}</small>
                 </div>
               </div>
 
@@ -537,23 +617,66 @@ function App() {
             </div>
           </div>
 
-          <div className="opening-balance-setting">
-            <div>
-              <strong>Available balance</strong>
-              <p>Set the amount you already have before adding transactions.</p>
+          <div className="account-settings-block">
+            <div className="settings-subheading">
+              <strong>Bank cards</strong>
+              <span>Keep each card balance separate.</span>
             </div>
-            <label className="balance-input-wrap">
-              <span>₸</span>
+
+            <form className="category-add-form" onSubmit={handleAddAccount}>
               <input
-                type="number"
-                min="0"
-                step="1"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={openingBalance}
-                onChange={(event) => setOpeningBalance(Number(event.target.value) || 0)}
+                type="text"
+                value={newAccount}
+                placeholder="New bank card"
+                onChange={(event) => setNewAccount(event.target.value)}
               />
-            </label>
+              <button type="submit">Add</button>
+            </form>
+
+            <div className="category-settings-list">
+              {accounts.map((item) => (
+                <div key={item.id} className="category-settings-row">
+                  {editingAccountId === item.id ? (
+                    <input
+                      className="category-edit-input"
+                      value={accountDraft}
+                      autoFocus
+                      onChange={(event) => setAccountDraft(event.target.value)}
+                    />
+                  ) : (
+                    <div className="account-row-label">
+                      <span>{item.name}</span>
+                      <label className="account-balance-input">
+                        <span>₸</span>
+                        <input
+                          type="number"
+                          min="0"
+                          step="1"
+                          inputMode="numeric"
+                          pattern="[0-9]*"
+                          value={item.balance}
+                          onChange={(event) => updateAccountBalance(item.id, event.target.value)}
+                        />
+                      </label>
+                    </div>
+                  )}
+
+                  <div className="category-settings-actions">
+                    {editingAccountId === item.id ? (
+                      <>
+                        <button type="button" className="category-save" onClick={saveAccountEdit}>Save</button>
+                        <button type="button" className="category-cancel" onClick={() => setEditingAccountId(null)}>Cancel</button>
+                      </>
+                    ) : (
+                      <>
+                        <button type="button" className="category-edit" onClick={() => { setEditingAccountId(item.id); setAccountDraft(item.name) }}>Edit</button>
+                        <button type="button" className="category-remove" onClick={() => handleDeleteAccount(item)}>Delete</button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <form className="category-add-form" onSubmit={handleAddCategory}>
@@ -808,6 +931,15 @@ function App() {
                 <select value={category} onChange={(event) => setCategory(event.target.value)}>
                   {userCategories.map((item) => (
                     <option key={item} value={item}>{item}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Bank card
+                <select value={accountId} onChange={(event) => setAccountId(event.target.value)}>
+                  {accounts.map((item) => (
+                    <option key={item.id} value={item.id}>{item.name}</option>
                   ))}
                 </select>
               </label>

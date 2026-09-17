@@ -275,6 +275,44 @@
 
 .category-filter select { border-radius: 10px; padding: 10px 12px; font-size: 14px; }
 
+.account-settings-block {
+  margin-bottom: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #edf7f1;
+}
+
+.settings-subheading { margin-bottom: 12px; }
+.settings-subheading strong { display: block; color: #13734f; font-size: 15px; }
+.settings-subheading span { color: #6b8b7c; font-size: 11px; }
+
+.account-row-label { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.account-row-label > span { min-width: 0; }
+
+.account-balance-input {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  width: 105px;
+  border: 1px solid #cfe6d8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #17805c;
+  padding: 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.account-balance-input input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #16352c;
+  padding: 6px 0;
+  font-size: 11px;
+}
+
 .analytics-panel {
   background: #ffffff;
   border: 1px solid #d9eee2;
@@ -586,6 +624,7 @@
 .type-badge.income { background: #e3f6eb; color: #13734f; }
 .transaction-main h3 { margin: 0 0 4px; font-size: 16px; }
 .transaction-main p { margin: 0; color: #6b8b7c; font-size: 12px; }
+.transaction-account { display: block; margin-top: 4px; color: #17805c; font-size: 10px; font-weight: 700; }
 
 .transaction-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
 .transaction-side strong { font-size: 15px; }
