@@ -4,6 +4,14 @@ import './App.css'
 const STORAGE_KEY = 'finance-tracker-mobile-v1'
 const CATEGORIES_STORAGE_KEY = 'finance-tracker-categories-v1'
 const BALANCE_STORAGE_KEY = 'finance-tracker-opening-balance-v1'
+const DATA_RESET_KEY = 'finance-tracker-data-reset-v1'
+const DATA_RESET_VERSION = '2'
+
+if (typeof window !== 'undefined' && localStorage.getItem(DATA_RESET_KEY) !== DATA_RESET_VERSION) {
+  localStorage.removeItem(STORAGE_KEY)
+  localStorage.removeItem(BALANCE_STORAGE_KEY)
+  localStorage.setItem(DATA_RESET_KEY, DATA_RESET_VERSION)
+}
 
 const defaultCategories = [
   'Food',
