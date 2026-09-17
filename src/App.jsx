@@ -207,7 +207,11 @@ function App() {
   const monthlyArchive = useMemo(() => {
     const years = {}
 
-    transactions.forEach((item) => {
+    const archiveTransactions = selectedAccountId === 'all'
+      ? transactions
+      : transactions.filter((item) => item.accountId === selectedAccountId)
+
+    archiveTransactions.forEach((item) => {
       const [year, month, day] = item.date.split('-')
       years[year] ??= {}
       years[year][month] ??= {}
@@ -227,7 +231,7 @@ function App() {
             days,
           })),
       }))
-  }, [transactions])
+  }, [transactions, selectedAccountId])
 
   const formatMoney = (value) =>
     new Intl.NumberFormat('en-US', {
@@ -736,6 +740,15 @@ function App() {
             <p className="eyebrow">History</p>
             <h2>Monthly expenses</h2>
             <p>Every year, month, and day is collected in one place.</p>
+            <label className="archive-account-filter">
+              Bank card
+              <select value={selectedAccountId} onChange={(event) => setSelectedAccountId(event.target.value)}>
+                <option value="all">All cards</option>
+                {accounts.map((item) => (
+                  <option key={item.id} value={item.id}>{item.name}</option>
+                ))}
+              </select>
+            </label>
           </div>
 
           {monthlyArchive.length > 0 ? monthlyArchive.map((yearGroup) => (

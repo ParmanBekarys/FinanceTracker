@@ -105,6 +105,8 @@
 
 .archive-heading h2 { margin: 0; font-size: 21px; }
 .archive-heading p:last-child { margin: 6px 0 18px; color: #6b8b7c; font-size: 12px; }
+.archive-account-filter { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 18px; color: #4d7965; font-size: 12px; }
+.archive-account-filter select { min-width: 135px; border: 1px solid #cfe6d8; border-radius: 9px; background: #ffffff; color: #285846; padding: 7px 9px; font-size: 12px; }
 .archive-year-group + .archive-year-group { margin-top: 22px; }
 .archive-year-group > h3 { margin: 0 0 10px; color: #13734f; font-size: 20px; }
 .archive-month-list {
