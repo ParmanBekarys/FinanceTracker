@@ -608,12 +608,16 @@
   bottom: 24px;
   width: 64px;
   height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   border-radius: 50%;
   background: linear-gradient(135deg, #17805c, #36b878);
   color: white;
   font-size: 38px;
   line-height: 1;
+  padding: 0;
   box-shadow: 0 10px 30px rgba(23, 128, 92, 0.28);
 }
 
