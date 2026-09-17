@@ -784,9 +784,6 @@ function App() {
                           <h4>{monthGroup.monthName}</h4>
                           <span>{monthTransactions.length} records</span>
                         </div>
-                        <div className="month-card-summary">
-                          <span className="month-chevron">›</span>
-                        </div>
                       </div>
 
                       <div className="month-card-metrics">
