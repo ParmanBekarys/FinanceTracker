@@ -436,10 +436,6 @@ function App() {
 
           {isMenuOpen && (
             <div className="app-menu">
-              <button type="button" onClick={() => navigateTo('settings')}>
-                <span className="app-menu-icon" aria-hidden="true">⚙︎</span>
-                <span>Settings</span>
-              </button>
               <button type="button" onClick={() => navigateTo('balance')}>
                 <span className="app-menu-icon" aria-hidden="true">⌂</span>
                 <span>My balance</span>
@@ -451,6 +447,10 @@ function App() {
               <button type="button" onClick={() => navigateTo('archive')}>
                 <span className="app-menu-icon" aria-hidden="true">▦</span>
                 <span>History</span>
+              </button>
+              <button type="button" onClick={() => navigateTo('settings')}>
+                <span className="app-menu-icon" aria-hidden="true">⚙︎</span>
+                <span>Settings</span>
               </button>
             </div>
           )}
