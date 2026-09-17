@@ -421,7 +421,7 @@ function App() {
       <header className="topbar">
         <div>
           <p className="eyebrow">Finance Tracker</p>
-          <h1>{activePage === 'analytics' ? 'Analytics' : activePage === 'settings' ? 'Settings' : activePage === 'archive' ? 'Monthly archive' : activePage === 'month' ? 'Month details' : 'My balance'}</h1>
+          <h1>{activePage === 'analytics' ? 'Analytics' : activePage === 'settings' ? 'Settings' : activePage === 'archive' ? 'History' : activePage === 'month' ? 'Month details' : 'My balance'}</h1>
         </div>
         <div className="menu-wrap">
           <button
@@ -436,6 +436,10 @@ function App() {
 
           {isMenuOpen && (
             <div className="app-menu">
+              <button type="button" onClick={() => navigateTo('settings')}>
+                <span className="app-menu-icon" aria-hidden="true">⚙︎</span>
+                <span>Settings</span>
+              </button>
               <button type="button" onClick={() => navigateTo('balance')}>
                 <span className="app-menu-icon" aria-hidden="true">⌂</span>
                 <span>My balance</span>
@@ -444,13 +448,9 @@ function App() {
                 <span className="app-menu-icon" aria-hidden="true">◔</span>
                 <span>Analytics</span>
               </button>
-              <button type="button" onClick={() => navigateTo('settings')}>
-                <span className="app-menu-icon" aria-hidden="true">⚙︎</span>
-                <span>Settings</span>
-              </button>
               <button type="button" onClick={() => navigateTo('archive')}>
                 <span className="app-menu-icon" aria-hidden="true">▦</span>
-                <span>Monthly archive</span>
+                <span>History</span>
               </button>
             </div>
           )}
@@ -739,7 +739,7 @@ function App() {
         <section className={activePage === 'archive' ? 'archive-panel' : 'archive-panel hidden-panel'}>
           <div className="archive-heading">
             <p className="eyebrow">History</p>
-            <h2>Monthly expenses</h2>
+            <h2>History</h2>
             <p>Every year, month, and day is collected in one place.</p>
             <label className="archive-account-filter">
               Bank card
@@ -861,7 +861,7 @@ function App() {
 
         <section className={activePage === 'month' ? 'archive-panel month-detail-panel' : 'archive-panel hidden-panel'}>
           <button type="button" className="back-to-archive" onClick={() => { setSelectedDayKey(null); setActivePage('archive') }}>
-            ‹ Monthly archive
+            ‹ History
           </button>
 
           {monthlyArchive.flatMap((yearGroup) => yearGroup.months.map((monthGroup) => ({
